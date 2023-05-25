@@ -19,7 +19,7 @@ function SendMessage() {
     event.preventDefault();
     axios
       .post(
-        "http://localhost:8000/api/message",
+        `${process.env.API_URL}/api/message`,
         {
           message: message, recipient: parseInt(recipientId ?? "")
         },
@@ -45,7 +45,7 @@ function SendMessage() {
 
   useEffect(() => {
     axios
-      .get<Message[]>("http://localhost:8000/api/Renvoimessage", {
+      .get<Message[]>(`${process.env.NEXT_PUBLIC_API_URL}/api/Renvoimessage`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

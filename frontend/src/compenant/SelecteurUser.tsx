@@ -24,7 +24,7 @@ export function UserSelector({ onChange }: ReceiverMessageProps) {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get<User[]>('http://localhost:8000/api/recupUser', {
+        const response = await axios.get<User[]>(`${process.env.NEXT_PUBLIC_API_URL}/api/recupUser`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUsers(response.data);
