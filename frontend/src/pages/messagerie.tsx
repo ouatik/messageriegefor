@@ -57,7 +57,7 @@ function SendMessage() {
       .catch((error) => {
         console.error("Erreur lors de la récupération des messages :", error);
       });
-  }, [token]);
+  }, [token, recipientId]);
 
   return (
     <>

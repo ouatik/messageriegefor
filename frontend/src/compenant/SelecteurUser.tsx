@@ -38,7 +38,6 @@ export function UserSelector({ onChange }: ReceiverMessageProps) {
 
   const handleUserChange = (event: any) => {
     setSelectedUser(event.target.value);
-    debugger
     onChange(event.target.value)
     
   };

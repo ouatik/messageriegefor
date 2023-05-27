@@ -17,7 +17,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class ApiMessageController extends AbstractController
 {
     #[Route('/api/message', name: 'api_message_index', methods:['POST'])]
-    public function index(Request $request, SerializerInterface $serializer, EntityManagerInterface $em): Response
+    public function index(Request $request, EntityManagerInterface $em): Response
     {
        $jsonmessage = json_decode($request->getContent(),true);
        $message = new Message();
