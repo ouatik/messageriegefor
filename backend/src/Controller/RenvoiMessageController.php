@@ -32,7 +32,8 @@ class RenvoiMessageController extends AbstractController
       //passer dans le find by avec le sender
       $sender = $this->getUser();
       $messagesISent = $messageRepository->findBy(['sender' => $sender,
-                                             'Receiver'=> $receiver]);
+                                             'Receiver'=> $receiver,
+                                          ]);
 
       $messagesIReceived = $messageRepository->findBy(['Receiver'=> $sender, 'sender' => $receiver]);
    

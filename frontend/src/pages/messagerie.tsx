@@ -1,76 +1,88 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import UserSelector from "@/compenant/SelecteurUser";
 
+import { useQuery, useMutation, QueryClient, QueryClientProvider } from "react-query";
+
+
 type Message = {
+  id: string;
   message: string;
-  author: string;
   recipient: string;
+  sender: {
+    id: string;
+  }
+
 };
 
 function SendMessage() {
   const [message, setMessage] = useState("");
-  const [recipientId, setRecipientId] = useState<string>();
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [recipientId, setRecipientId] = useState<string | undefined>();
+  // const Idsender = User["id"];
   const token =
     typeof localStorage !== "undefined" ? localStorage.getItem("token") : "";
 
-  const handleSubmit = (event: any) => {
-    event.preventDefault();
-    axios
-      .post(
-        `${process.env.API_URL}/api/message`,
-        {
-          message: message, recipient: parseInt(recipientId ?? "")
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-
-      .then((response) => {
-        console.log("Message envoyé :", response.data);
-        setMessage("");
-      })
-      .catch((error) => {
-        console.error("Erreur lors de l'envoi du message :", error);
-      });
-  };
-
-  const handleInputChange = (event: any) => {
-    setMessage(event.target.value);
-  };
-
-  useEffect(() => {
-    axios
-      .get<Message[]>(`${process.env.NEXT_PUBLIC_API_URL}/api/Renvoimessage`, {
+  const fetchMessages = async () => {
+    const response = await axios.get<Message[]>(
+      `http://localhost:8000/api/Renvoimessage?receiverId=${recipientId}`,
+      {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      })
-      .then((response) => {
-        console.log("Messages récupérés :", response.data);
-        setMessages(response.data);
-      })
-      .catch((error) => {
-        console.error("Erreur lors de la récupération des messages :", error);
-      });
-  }, [token, recipientId]);
+      }
+    );
+
+    return response.data;
+  };
+  const { data, isLoading } = useQuery<Message[]>({
+    queryKey: ['messages'],
+    queryFn: fetchMessages,
+    refetchInterval: 1000,
+  });
+
+  const {
+    data: messages,
+    isLoading: isMessagesLoading,
+    isError: isMessagesError,
+    refetch: refetchMessages,
+  } = useQuery<Message[]>("messages", fetchMessages, {
+    enabled: !!recipientId,
+  });
+
+  console.log(message);
+
+  const sendMessageMutation = useMutation((newMessage: Message) =>
+    axios.post("http://localhost:8000/api/message", newMessage, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+  );
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    sendMessageMutation.mutate({
+      id: "",
+      message: message,
+      recipient: recipientId || "",
+      sender: { id: "" },
+    });
+    setMessage("");
+  };
+  
+
+  sendMessageMutation.isSuccess && refetchMessages();
 
   return (
     <>
       <div className="h-screen flex flex-col bg-gray-200">
         <div className="bg-orange-500 text-white p-4 flex justify-center">
-          Messagerie
+          Messagerie  {recipientId}
         </div>
-        <div className="flex-1 overflow-y-scroll p-4">
-          {messages.map((message, index) => (
-            <div className="flex justify-start mb-4" key={index}>
-              <div className="flex-1 ml-2 text-white bg-blue-500 rounded-lg p-2">
-                <p className="font-medium">{message.author}</p>
-                <p>{message.message}</p>
+        <div className="w-full-screen flex-1 overflow-y-scroll p-4">
+          {messages?.sort((a, b) => parseInt(a.id) - parseInt(b.id)).map((message, index) => (
+           <div className={`flex ${recipientId === message.sender?.id ? "justify-end" : "justify-start"} mb-4`} key={index}>
+              <div className={`ml-2 text-white ${recipientId == message.sender?.id ? "bg-blue-500" : "bg-green-500"} rounded-lg p-2`}>
+                <p>{message.sender.id}</p>
               </div>
             </div>
           ))}
@@ -82,7 +94,7 @@ function SendMessage() {
               placeholder="Écrire un message..."
               className="flex-1 rounded-full border-gray-300 px-4 py-2 mr-2 focus:outline-none focus:ring-2 focus:ring-green-500"
               value={message}
-              onChange={handleInputChange}
+              onChange={(event) => setMessage(event.target.value)}
             />
             <button
               type="submit"
@@ -90,7 +102,6 @@ function SendMessage() {
             >
               Envoyer
             </button>
-
             <UserSelector onChange={setRecipientId} />
           </form>
         </div>
@@ -99,4 +110,14 @@ function SendMessage() {
   );
 }
 
-export default SendMessage;
+const queryClient = new QueryClient();
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <SendMessage />
+    </QueryClientProvider>
+  );
+}
+
+export default App;
