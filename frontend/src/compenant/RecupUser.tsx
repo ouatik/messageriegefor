@@ -15,7 +15,7 @@ function RecupUser() {
     typeof localStorage !== 'undefined' ? localStorage.getItem('token') : '';
 
   const { data: user, isLoading, isError } = useQuery<User>('user', async () => {
-    const response = await axios.get<User>('http://localhost:8000/api/me', {
+    const response = await axios.get<User>(`${process.env.NEXT_PUBLIC_API_URL}/api/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

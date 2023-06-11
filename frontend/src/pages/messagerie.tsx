@@ -24,7 +24,7 @@ function SendMessage() {
 
   const fetchMessages = async () => {
     const response = await axios.get<Message[]>(
-      `http://localhost:8000/api/Renvoimessage?receiverId=${recipientId}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/Renvoimessage?receiverId=${recipientId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -52,7 +52,7 @@ function SendMessage() {
   console.log(message);
 
   const sendMessageMutation = useMutation((newMessage: Message) =>
-    axios.post("http://localhost:8000/api/message", newMessage, {
+    axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/message`, newMessage, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
