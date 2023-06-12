@@ -37,13 +37,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable:true)]
     #[Groups("post:cool")]
     
     
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable:true)]
     #[Groups("post:option_message")]
     # TODO RENAME attention aux majuscules qui se glissent là où elles ne devraient pas. Le fait de casser le camelCase ça peut jouer des tours avec des bugs débiles dans des moments où tu fais pas attention
     private ?string $Firstname = null;
