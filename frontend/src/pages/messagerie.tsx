@@ -82,7 +82,7 @@ function SendMessage() {
           {messages?.sort((a, b) => parseInt(a.id) - parseInt(b.id)).map((message, index) => (
            <div className={`flex ${recipientId === message.sender?.id ? "justify-end" : "justify-start"} mb-4`} key={index}>
               <div className={`ml-2 text-white ${recipientId == message.sender?.id ? "bg-blue-500" : "bg-green-500"} rounded-lg p-2`}>
-                <p>{message.sender.id}</p>
+                <p>{message.message}</p>
               </div>
             </div>
           ))}
@@ -91,7 +91,7 @@ function SendMessage() {
           <form onSubmit={handleSubmit} className="flex">
             <input
               type="text"
-              placeholder="Écrire un message..."
+              placeholder="Écrire un message...."
               className="flex-1 rounded-full border-gray-300 px-4 py-2 mr-2 focus:outline-none focus:ring-2 focus:ring-green-500"
               value={message}
               onChange={(event) => setMessage(event.target.value)}
