@@ -91,7 +91,7 @@ function SendMessage() {
           <form onSubmit={handleSubmit} className="flex">
             <input
               type="text"
-              placeholder="Écrire un message..."
+              placeholder="Écrire un message...."
               className="flex-1 rounded-full border-gray-300 px-4 py-2 mr-2 focus:outline-none focus:ring-2 focus:ring-green-500"
               value={message}
               onChange={(event) => setMessage(event.target.value)}
