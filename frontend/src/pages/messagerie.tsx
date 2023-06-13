@@ -82,7 +82,7 @@ function SendMessage() {
           {messages?.sort((a, b) => parseInt(a.id) - parseInt(b.id)).map((message, index) => (
            <div className={`flex ${recipientId === message.sender?.id ? "justify-end" : "justify-start"} mb-4`} key={index}>
               <div className={`ml-2 text-white ${recipientId == message.sender?.id ? "bg-blue-500" : "bg-green-500"} rounded-lg p-2`}>
-                <p>{message.sender.id}</p>
+                <p>{message.message}</p>
               </div>
             </div>
           ))}
